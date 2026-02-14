@@ -1,0 +1,17 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "@types/node"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".nuxt",
+    ".output"
+  ]
+}

@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+  --sidebar-border: 214.3 31.8% 91.4%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 212.7 26.8% 83.9%;
+  --sidebar: 222.2 84% 6%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-border: 217.2 32.6% 17.5%;
+  --sidebar-accent: 217.2 32.6% 17.5%;
+  --sidebar-accent-foreground: 210 40% 98%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Utility classes */
+.bg-background { background-color: hsl(var(--background)); }
+.bg-foreground { background-color: hsl(var(--foreground)); }
+.bg-muted { background-color: hsl(var(--muted)); }
+.bg-sidebar { background-color: hsl(var(--sidebar)); }
+.bg-sidebar-accent { background-color: hsl(var(--sidebar-accent)); }
+.bg-accent { background-color: hsl(var(--accent)); }
+
+.text-foreground { color: hsl(var(--foreground)); }
+.text-muted-foreground { color: hsl(var(--muted-foreground)); }
+.text-sidebar-foreground { color: hsl(var(--sidebar-foreground)); }
+.text-sidebar-accent-foreground { color: hsl(var(--sidebar-accent-foreground)); }
+.text-primary { color: hsl(var(--primary)); }
+.text-primary-foreground { color: hsl(var(--primary-foreground)); }
+
+.border-border { border-color: hsl(var(--border)); }
+.border-sidebar-border { border-color: hsl(var(--sidebar-border)); }
+
+.hover\:bg-muted\/50:hover { background-color: hsl(var(--muted) / 0.5); }
+.hover\:bg-accent:hover { background-color: hsl(var(--accent)); }
+.hover\:bg-sidebar-accent:hover { background-color: hsl(var(--sidebar-accent)); }
+.hover\:text-sidebar-accent-foreground:hover { color: hsl(var(--sidebar-accent-foreground)); }
+.hover\:border-primary\/50:hover { border-color: hsl(var(--primary) / 0.5); }
+
+/* AG Grid theme overrides */
+.ag-theme-alpine {
+  --ag-background-color: hsl(var(--background));
+  --ag-header-background-color: hsl(var(--muted));
+  --ag-odd-row-background-color: hsl(var(--background));
+  --ag-row-hover-color: hsl(var(--muted) / 0.5);
+  --ag-border-color: hsl(var(--border));
+}
+
+.ag-theme-alpine-dark {
+  --ag-background-color: hsl(var(--background));
+  --ag-header-background-color: hsl(var(--muted));
+  --ag-odd-row-background-color: hsl(var(--background));
+  --ag-row-hover-color: hsl(var(--muted) / 0.5);
+  --ag-border-color: hsl(var(--border));
+  --ag-foreground-color: hsl(var(--foreground));
+}
+
+/* Arco Design dark mode overrides */
+body[arco-theme='dark'] {
+  --color-bg-1: hsl(var(--background));
+  --color-bg-2: hsl(var(--muted));
+  --color-bg-3: hsl(var(--muted));
+  --color-text-1: hsl(var(--foreground));
+  --color-text-2: hsl(var(--muted-foreground));
+  --color-text-3: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Search highlight */
+mark {
+  background-color: #fef08a;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.dark mark {
+  background-color: #854d0e;
+  color: #fef3c7;
+}
