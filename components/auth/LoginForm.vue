@@ -19,6 +19,10 @@
       </a-form-item>
 
       <a-form-item>
+        <a-checkbox v-model="rememberMe">记住账号密码</a-checkbox>
+      </a-form-item>
+
+      <a-form-item>
         <a-button type="primary" html-type="submit" long :loading="loading">
           登录
         </a-button>
@@ -35,16 +39,45 @@
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
 
+const STORAGE_KEY = 'remembered_login'
+
 const { login, loading } = useAuth()
+const rememberMe = ref(false)
 
 const form = reactive({
   username: '',
   password: '',
 })
 
+// Load saved credentials on mount
+onMounted(() => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const { username, password } = JSON.parse(saved)
+      form.username = username || ''
+      form.password = password || ''
+      rememberMe.value = true
+    }
+  } catch {
+    // ignore
+  }
+})
+
 async function handleSubmit() {
   try {
     await login(form.username, form.password)
+
+    // Save or clear credentials based on checkbox
+    if (rememberMe.value) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        username: form.username,
+        password: form.password,
+      }))
+    } else {
+      localStorage.removeItem(STORAGE_KEY)
+    }
+
     Message.success('登录成功')
     navigateTo('/dashboard')
   } catch (e: any) {

@@ -6,3 +6,6 @@ node_modules/
 .DS_Store
 dist/
 data/
+test-logs/
+coverage/
+*.local

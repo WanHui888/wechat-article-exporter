@@ -189,25 +189,33 @@ async function downloadAll() {
   }
 
   const fakeid = 'SINGLE_DOWNLOAD'
-  await downloader.downloadArticleHTML(urls, fakeid, {
-    onProgress: (url) => {
-      const article = articles.find(a => a.url === url)
-      if (article) {
-        article.status = 'completed'
-        // Try to extract title from what was saved
-        extractTitle(url)
-      }
-    },
-    onError: (url, error) => {
-      const article = articles.find(a => a.url === url)
-      if (article) {
-        article.status = 'error'
-        article.error = error
-      }
+  const result = await downloader.downloadArticleHTML(urls, fakeid, {
+    onLoginExpired: () => {
+      Message.warning('微信登录已过期，请重新登录')
     },
   })
 
-  // Mark any still-downloading as completed or error (in case of abort)
+  // Update article statuses based on batch result
+  if (result?.results) {
+    for (const r of result.results) {
+      const article = articles.find(a => a.url === r.url)
+      if (!article) continue
+
+      if (r.status === 'completed') {
+        article.status = 'completed'
+        if (r.title) article.title = r.title
+        else extractTitle(r.url)
+      } else if (r.status === 'skipped') {
+        article.status = 'completed'
+        extractTitle(r.url)
+      } else if (r.status === 'failed') {
+        article.status = 'error'
+        article.error = r.error || '下载失败'
+      }
+    }
+  }
+
+  // Mark any still-downloading as pending (in case of abort)
   for (const article of articles) {
     if (article.status === 'downloading') {
       article.status = downloader.aborted.value ? 'pending' : 'error'

@@ -57,6 +57,14 @@ export default defineNuxtConfig({
     },
   },
 
+  vite: {
+    server: {
+      watch: {
+        ignored: ['**/data/**', '**/test-logs/**'],
+      },
+    },
+  },
+
   typescript: {
     strict: true,
     typeCheck: false,

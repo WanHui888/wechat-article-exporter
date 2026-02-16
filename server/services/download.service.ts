@@ -206,9 +206,22 @@ export class DownloadService {
       // Article pages are public, so this is fine to ignore
     }
 
-    // Extract title
-    const titleMatch = htmlContent.match(/<title>([^<]*)<\/title>/i)
-    const title = (titleMatch?.[1] || 'Untitled').trim()
+    // Extract title (WeChat pages have empty <title>, real title is in msg_title or og:title)
+    let title = 'Untitled'
+    const msgTitleMatch = htmlContent.match(/var\s+msg_title\s*=\s*'([^']*)'/)
+    if (msgTitleMatch?.[1]) {
+      title = msgTitleMatch[1].trim()
+    } else {
+      const ogTitleMatch = htmlContent.match(/og:title"?\s+content="([^"]*)"/)
+      if (ogTitleMatch?.[1]) {
+        title = ogTitleMatch[1].trim()
+      } else {
+        const htmlTitleMatch = htmlContent.match(/<title>([^<]+)<\/title>/i)
+        if (htmlTitleMatch?.[1]?.trim()) {
+          title = htmlTitleMatch[1].trim()
+        }
+      }
+    }
 
     // Extract comment_id
     const commentIdMatch = htmlContent.match(/var\s+comment_id\s*=\s*"([^"]+)"/)
