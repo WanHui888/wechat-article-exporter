@@ -28,12 +28,12 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    jwtSecret: process.env.JWT_SECRET || 'change-me-in-production-please',
+    jwtSecret: process.env.JWT_SECRET,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     dbHost: process.env.DB_HOST || 'localhost',
     dbPort: parseInt(process.env.DB_PORT || '3306'),
     dbUser: process.env.DB_USER || 'root',
-    dbPassword: process.env.DB_PASSWORD || '',
+    dbPassword: process.env.DB_PASSWORD,
     dbName: process.env.DB_NAME || 'wechat_exporter',
     meiliHost: process.env.MEILI_HOST || 'http://localhost:7700',
     meiliKey: process.env.MEILI_KEY || '',

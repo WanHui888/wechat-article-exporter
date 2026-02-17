@@ -2,16 +2,11 @@ import type { AuthResponse, User } from '~/types'
 
 const API_BASE = '/api/auth'
 
-function getAuthHeaders(): Record<string, string> {
-  if (import.meta.server) return {}
-  const token = localStorage.getItem('auth_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
-
 export async function apiLogin(username: string, password: string): Promise<AuthResponse> {
   const { data } = await $fetch<{ success: boolean; data: AuthResponse }>(`${API_BASE}/login`, {
     method: 'POST',
     body: { username, password },
+    credentials: 'include',  // 使用 HttpOnly Cookie
   })
   return data
 }
@@ -20,17 +15,18 @@ export async function apiRegister(username: string, password: string, email?: st
   const { data } = await $fetch<{ success: boolean; data: AuthResponse }>(`${API_BASE}/register`, {
     method: 'POST',
     body: { username, password, email, nickname },
+    credentials: 'include',
   })
   return data
 }
 
 export async function apiLogout(): Promise<void> {
-  await $fetch(`${API_BASE}/logout`, { method: 'POST', headers: getAuthHeaders() })
+  await $fetch(`${API_BASE}/logout`, { method: 'POST', credentials: 'include' })
 }
 
 export async function apiGetMe(): Promise<User> {
   const { data } = await $fetch<{ success: boolean; data: User }>(`${API_BASE}/me`, {
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
   return data
 }
@@ -39,7 +35,7 @@ export async function apiUpdateProfile(data: { nickname?: string; email?: string
   const resp = await $fetch<{ success: boolean; data: User }>(`${API_BASE}/profile`, {
     method: 'PUT',
     body: data,
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
   return resp.data
 }
@@ -48,6 +44,6 @@ export async function apiChangePassword(oldPassword: string, newPassword: string
   await $fetch(`${API_BASE}/password`, {
     method: 'PUT',
     body: { oldPassword, newPassword },
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }

@@ -16,10 +16,10 @@ export function getPool() {
       password: config.dbPassword,
       database: config.dbName,
       waitForConnections: true,
-      connectionLimit: 20,
-      queueLimit: 0,
+      connectionLimit: parseInt(process.env.DB_POOL_SIZE || '50'),  // 20 → 50
+      queueLimit: 100,  // 0 (无限) → 100 (防止无限堆积)
       enableKeepAlive: true,
-      keepAliveInitialDelay: 10000,
+      keepAliveInitialDelay: 5000,  // 10000 → 5000 (更快的心跳)
       charset: 'utf8mb4',
     })
   }

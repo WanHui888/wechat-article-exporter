@@ -101,12 +101,51 @@ export class AccountService {
     alias?: string
     roundHeadImg?: string
   }>) {
-    const results = []
-    for (const account of accounts) {
-      const result = await this.upsertAccount(userId, account)
-      results.push(result)
+    // 1. 批量查询现有账户
+    const fakeids = accounts.map(a => a.fakeid)
+    const existingAccounts = await this.db.select()
+      .from(schema.mpAccounts)
+      .where(and(
+        eq(schema.mpAccounts.userId, userId),
+        inArray(schema.mpAccounts.fakeid, fakeids),
+      ))
+
+    const existingMap = new Map(existingAccounts.map(a => [a.fakeid, a]))
+
+    // 2. 分离新增和更新
+    const toInsert = accounts.filter(a => !existingMap.has(a.fakeid))
+    const toUpdate = accounts.filter(a => existingMap.has(a.fakeid))
+
+    // 3. 批量插入新账户
+    if (toInsert.length > 0) {
+      await this.db.insert(schema.mpAccounts).values(
+        toInsert.map(a => ({ userId, ...a })),
+      )
     }
-    return results
+
+    // 4. 并行更新已存在的账户
+    if (toUpdate.length > 0) {
+      await Promise.all(toUpdate.map(a =>
+        this.db.update(schema.mpAccounts)
+          .set({
+            nickname: a.nickname,
+            alias: a.alias,
+            roundHeadImg: a.roundHeadImg,
+          })
+          .where(and(
+            eq(schema.mpAccounts.userId, userId),
+            eq(schema.mpAccounts.fakeid, a.fakeid),
+          )),
+      ))
+    }
+
+    // 5. 批量返回结果
+    return this.db.select()
+      .from(schema.mpAccounts)
+      .where(and(
+        eq(schema.mpAccounts.userId, userId),
+        inArray(schema.mpAccounts.fakeid, fakeids),
+      ))
   }
 }
 

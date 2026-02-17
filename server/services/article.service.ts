@@ -1,6 +1,7 @@
 import { eq, and, desc, sql, inArray, like, or, gte, lte } from 'drizzle-orm'
 import { getDb, schema } from '~/server/database'
 import { getSearchService } from './search.service'
+import { searchIndexQueue } from '~/server/utils/queue'
 
 export class ArticleService {
   private db = getDb()
@@ -12,6 +13,7 @@ export class ArticleService {
     startTime?: number
     endTime?: number
     isFavorited?: boolean
+    skipCount?: boolean  // 新增：跳过 COUNT 查询
   }) {
     const page = options?.page || 1
     const pageSize = options?.pageSize || 50
@@ -37,26 +39,32 @@ export class ArticleService {
 
     const where = and(...conditions)
 
-    const [items, countResult] = await Promise.all([
-      this.db.select()
+    // 多查1条判断是否有下一页
+    const items = await this.db.select()
+      .from(schema.articles)
+      .where(where)
+      .orderBy(desc(schema.articles.createTime))
+      .limit(pageSize + 1)
+      .offset(offset)
+
+    const hasMore = items.length > pageSize
+    if (hasMore) items.pop() // 移除多余的一条
+
+    // COUNT 查询（可选）
+    let total: number | undefined
+    if (!options?.skipCount) {
+      const countResult = await this.db.select({ count: sql<number>`count(*)` })
         .from(schema.articles)
         .where(where)
-        .orderBy(desc(schema.articles.createTime))
-        .limit(pageSize)
-        .offset(offset),
-      this.db.select({ count: sql<number>`count(*)` })
-        .from(schema.articles)
-        .where(where),
-    ])
-
-    const total = countResult[0]?.count || 0
+      total = countResult[0]?.count || 0
+    }
 
     return {
       items,
       total,
       page,
       pageSize,
-      hasMore: offset + items.length < total,
+      hasMore,
     }
   }
 
@@ -147,21 +155,30 @@ export class ArticleService {
         },
       })
 
-      // Index in MeiliSearch for full-text search
+      // Index in MeiliSearch for full-text search (异步，不阻塞)
       const articleId = result[0].insertId
       if (articleId) {
-        getSearchService().indexArticle({
-          id: articleId,
-          userId,
-          fakeid: data.fakeid,
-          title: data.title,
-          link: data.link,
-          cover: data.cover,
-          digest: data.digest,
-          authorName: data.authorName,
-          createTime: data.createTime,
-          isDeleted: data.isDeleted,
-        }).catch(() => {})
+        searchIndexQueue.add(
+          {
+            id: articleId,
+            userId,
+            fakeid: data.fakeid,
+            title: data.title,
+            link: data.link,
+            cover: data.cover,
+            digest: data.digest,
+            authorName: data.authorName,
+            createTime: data.createTime,
+            isDeleted: data.isDeleted,
+          },
+          async (article) => {
+            try {
+              await getSearchService().indexArticle(article)
+            } catch (error) {
+              console.error('Failed to index article:', error)
+            }
+          },
+        )
       }
     } catch (e) {
       console.error('Failed to upsert article:', e)

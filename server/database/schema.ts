@@ -101,7 +101,10 @@ export const articleHtml = mysqlTable('article_html', {
   filePath: varchar('file_path', { length: 500 }).notNull(),
   fileSize: bigint('file_size', { mode: 'number' }).notNull().default(0),
   createdAt: datetime('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
-})
+}, (table) => [
+  index('idx_user_fakeid').on(table.userId, table.fakeid),
+  index('idx_article_url').on(table.articleUrl),  // 新增：查询已下载 URL 时使用
+])
 
 // ==================== article_metadata ====================
 export const articleMetadata = mysqlTable('article_metadata', {
@@ -153,7 +156,9 @@ export const resources = mysqlTable('resources', {
   fileSize: bigint('file_size', { mode: 'number' }).notNull().default(0),
   mimeType: varchar('mime_type', { length: 100 }),
   createdAt: datetime('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
-})
+}, (table) => [
+  uniqueIndex('uk_user_resource_url').on(table.userId, table.resourceUrl),  // 新增：防止重复下载
+])
 
 // ==================== resource_maps ====================
 export const resourceMaps = mysqlTable('resource_maps', {
@@ -255,4 +260,5 @@ export const exportJobs = mysqlTable('export_jobs', {
   completedAt: datetime('completed_at'),
 }, (table) => [
   index('idx_user_status').on(table.userId, table.status),
+  index('idx_expires_at').on(table.expiresAt),  // 新增：清理过期任务时使用
 ])
