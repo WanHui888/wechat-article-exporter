@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>带图片的测试文章</title>
+</head>
+<body>
+    <script>
+        var msg_title = '带图片的测试文章';
+        var comment_id = "9876543210";
+    </script>
+    <div id="js_article">
+        <h1>带图片的测试文章</h1>
+
+        <!-- 直接src图片 -->
+        <img src="https://mmbiz.qpic.cn/mmbiz_jpg/abc123/0?wx_fmt=jpeg" alt="图片1">
+
+        <!-- 懒加载data-src图片 -->
+        <img data-src="https://mmbiz.qlogo.cn/mmbiz_png/xyz789/0?wx_fmt=png" alt="图片2">
+
+        <!-- CSS背景图片 -->
+        <div style="background-image: url('https://mmbiz.qpic.cn/mmbiz_jpg/bg123/0'); width: 100px; height: 100px;"></div>
+
+        <!-- 非微信URL（应忽略） -->
+        <img src="https://example.com/image.jpg" alt="外部图片">
+
+        <!-- 重复URL（应去重） -->
+        <img src="https://mmbiz.qpic.cn/mmbiz_jpg/abc123/0?wx_fmt=jpeg" alt="重复图片">
+
+        <!-- 双引号CSS背景 -->
+        <div style="background-image: url(&quot;https://wx1.mmbiz.qpic.cn/mmbiz_webp/web123/0?wx_fmt=webp&quot;);"></div>
+
+        <p>文章内容...</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+[
+  {
+    "username": "testadmin",
+    "email": "admin@test.com",
+    "passwordHash": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+    "role": "admin",
+    "isActive": true,
+    "storageQuota": 10737418240,
+    "storageUsed": 0
+  },
+  {
+    "username": "testuser",
+    "email": "user@test.com",
+    "passwordHash": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+    "role": "user",
+    "isActive": true,
+    "storageQuota": 5368709120,
+    "storageUsed": 0
+  },
+  {
+    "username": "inactiveuser",
+    "email": "inactive@test.com",
+    "passwordHash": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+    "role": "user",
+    "isActive": false,
+    "storageQuota": 5368709120,
+    "storageUsed": 0
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "aid": "2650723456_1",
+    "albumId": "",
+    "appmsgid": 2650723456,
+    "checking": 0,
+    "cover": "https://via.placeholder.com/400x300",
+    "createTime": 1704067200,
+    "digest": "这是一篇测试文章的摘要内容",
+    "itemidx": 1,
+    "link": "http://mp.weixin.qq.com/s?__biz=MzAwNjYwNTgxMA==&mid=2650723456&idx=1&sn=abcd1234",
+    "title": "测试文章标题1",
+    "updateTime": 1704067200,
+    "fakeid": "MzAwNjYwNTgxMA=="
+  },
+  {
+    "aid": "2650723457_1",
+    "albumId": "",
+    "appmsgid": 2650723457,
+    "checking": 0,
+    "cover": "https://via.placeholder.com/400x300",
+    "createTime": 1704153600,
+    "digest": "第二篇测试文章的摘要",
+    "itemidx": 1,
+    "link": "http://mp.weixin.qq.com/s?__biz=MzAwNjYwNTgxMA==&mid=2650723457&idx=1&sn=efgh5678",
+    "title": "测试文章标题2",
+    "updateTime": 1704153600,
+    "fakeid": "MzAwNjYwNTgxMA=="
+  },
+  {
+    "aid": "2650723458_1",
+    "albumId": "album_001",
+    "appmsgid": 2650723458,
+    "checking": 0,
+    "cover": "https://via.placeholder.com/400x300",
+    "createTime": 1704240000,
+    "digest": "第三篇测试文章，带专辑",
+    "itemidx": 1,
+    "link": "http://mp.weixin.qq.com/s?__biz=MzAwNjYwNTgxMA==&mid=2650723458&idx=1&sn=ijkl9012",
+    "title": "测试文章标题3（专辑）",
+    "updateTime": 1704240000,
+    "fakeid": "MzAwNjYwNTgxMA=="
+  }
+]

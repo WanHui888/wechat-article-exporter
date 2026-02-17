@@ -208,7 +208,8 @@ export class DownloadService {
 
     // Extract title (WeChat pages have empty <title>, real title is in msg_title or og:title)
     let title = 'Untitled'
-    const msgTitleMatch = htmlContent.match(/var\s+msg_title\s*=\s*'([^']*)'/)
+    // Support both single and double quotes
+    const msgTitleMatch = htmlContent.match(/var\s+msg_title\s*=\s*['"]([^'"]*?)['"]/)
     if (msgTitleMatch?.[1]) {
       title = msgTitleMatch[1].trim()
     } else {
@@ -223,8 +224,8 @@ export class DownloadService {
       }
     }
 
-    // Extract comment_id
-    const commentIdMatch = htmlContent.match(/var\s+comment_id\s*=\s*"([^"]+)"/)
+    // Extract comment_id (support both single and double quotes)
+    const commentIdMatch = htmlContent.match(/var\s+comment_id\s*=\s*['"]([^'"]+?)['"]/)
     const commentId = commentIdMatch?.[1]
 
     // Extract image URLs
@@ -366,8 +367,23 @@ export class DownloadService {
     const effectiveConcurrency = Math.min(Math.max(1, concurrency), 3)
 
     const processOne = async (url: string): Promise<void> => {
+      // Check if login expired before starting download
+      if (loginExpired) {
+        results.push({ url, status: 'failed', error: 'wechat_expired' })
+        failed++
+        return
+      }
+
       try {
         const result = await this.downloadArticle(userId, fakeid, url)
+
+        // Check again after async operation in case expired during download
+        if (loginExpired) {
+          results.push({ url, status: 'failed', error: 'wechat_expired' })
+          failed++
+          return
+        }
+
         completed++
         results.push({
           url,
@@ -437,3 +453,6 @@ export function getDownloadService(): DownloadService {
   if (!_downloadService) _downloadService = new DownloadService()
   return _downloadService
 }
+
+// Export helper functions for testing
+export { isWeChatCdnUrl, hashUrl, guessExtension, extractImageUrls, replaceImageUrls }

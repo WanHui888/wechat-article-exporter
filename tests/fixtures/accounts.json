@@ -1,0 +1,22 @@
+[
+  {
+    "fakeid": "MzAwNjYwNTgxMA==",
+    "nickname": "测试公众号A",
+    "alias": "test_account_a",
+    "avatar": "https://via.placeholder.com/150",
+    "intro": "这是一个测试公众号",
+    "roundHeadImg": "https://via.placeholder.com/150",
+    "serviceType": 2,
+    "signature": "测试签名"
+  },
+  {
+    "fakeid": "MzAwNjYwNTgxMQ==",
+    "nickname": "测试公众号B",
+    "alias": "test_account_b",
+    "avatar": "https://via.placeholder.com/150",
+    "intro": "另一个测试公众号",
+    "roundHeadImg": "https://via.placeholder.com/150",
+    "serviceType": 2,
+    "signature": "测试签名B"
+  }
+]
