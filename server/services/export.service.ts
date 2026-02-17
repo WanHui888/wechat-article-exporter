@@ -2,6 +2,7 @@ import { eq, and, desc, sql } from 'drizzle-orm'
 import { join } from 'path'
 import archiver from 'archiver'
 import { createWriteStream, promises as fs } from 'fs'
+import pLimit from 'p-limit'
 import { getDb, schema } from '~/server/database'
 import { getHtmlService } from './html.service'
 import { getMetadataService } from './metadata.service'
@@ -139,7 +140,10 @@ export class ExportService {
     archive.pipe(output)
 
     let progress = 0
-    for (const url of urls) {
+    const limit = pLimit(10) // 并发限制：10个
+
+    // 并行处理所有 URL
+    const tasks = urls.map(url => limit(async () => {
       const html = await htmlService.getHtml(userId, url)
       if (html?.filePath) {
         const exists = await fileService.fileExists(html.filePath)
@@ -153,7 +157,9 @@ export class ExportService {
       if (progress % 10 === 0) {
         await this.updateProgress(jobId, progress)
       }
-    }
+    }))
+
+    await Promise.all(tasks)
 
     await archive.finalize()
     await new Promise<void>((resolve, reject) => {

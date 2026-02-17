@@ -4,30 +4,24 @@
 
 const WEB_API = '/api/web'
 
-function getAuthHeaders(): Record<string, string> {
-  if (import.meta.server) return {}
-  const token = localStorage.getItem('auth_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
-
 export async function getArticleList(fakeid: string, begin = 0, keyword = '', size = 5) {
   return $fetch<any>(`${WEB_API}/mp/appmsgpublish`, {
     params: { id: fakeid, begin, keyword, size },
-    headers: getAuthHeaders(),
+    credentials: 'include',  // 使用 HttpOnly Cookie
   })
 }
 
 export async function getAccountList(begin = 0, keyword: string, size = 5) {
   return $fetch<any>(`${WEB_API}/mp/searchbiz`, {
     params: { begin, keyword, size },
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }
 
 export async function searchByUrl(url: string) {
   return $fetch<any>(`${WEB_API}/mp/searchbyurl`, {
     params: { url },
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }
 
@@ -38,7 +32,7 @@ export async function getComment(params: {
   key: string
   pass_ticket: string
 }) {
-  return $fetch<any>(`${WEB_API}/misc/comment`, { params, headers: getAuthHeaders() })
+  return $fetch<any>(`${WEB_API}/misc/comment`, { params, credentials: 'include' })
 }
 
 export async function getAlbum(params: {
@@ -49,7 +43,7 @@ export async function getAlbum(params: {
   begin_msgid?: string
   begin_itemidx?: string
 }) {
-  return $fetch<any>(`${WEB_API}/misc/appmsgalbum`, { params, headers: getAuthHeaders() })
+  return $fetch<any>(`${WEB_API}/misc/appmsgalbum`, { params, credentials: 'include' })
 }
 
 export async function getArticleListWithCredential(fakeid: string, begin: number, credential: {
@@ -63,18 +57,18 @@ export async function getArticleListWithCredential(fakeid: string, begin: number
       begin,
       ...credential,
     },
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }
 
 export async function getMpInfo() {
   return $fetch<{ nick_name: string; head_img: string }>(`${WEB_API}/mp/info`, {
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }
 
 export async function getCurrentIp() {
   return $fetch<{ ip: string }>(`${WEB_API}/misc/current-ip`, {
-    headers: getAuthHeaders(),
+    credentials: 'include',
   })
 }
