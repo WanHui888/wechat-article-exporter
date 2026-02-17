@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: WeChat Article Exporter API
+  version: 3.0.0
+  description: 微信公众号文章批量导出工具 API 文档
+  contact:
+    name: GitHub
+    url: https://github.com/WanHui888/wechat-article-exporter
+
+servers:
+  - url: http://localhost:3000/api
+    description: 开发服务器
+  - url: /api
+    description: 当前服务器
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+      description: HttpOnly Cookie 认证
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        email:
+          type: string
+        nickname:
+          type: string
+
+paths:
+  /auth/login:
+    post:
+      tags: [认证]
+      summary: 用户登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 128
+      responses:
+        '200':
+          description: 登录成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: auth_token=xxx; HttpOnly; Secure; SameSite=Strict
+        '401':
+          description: 用户名或密码错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register:
+    post:
+      tags: [认证]
+      summary: 用户注册
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                password:
+                  type: string
+                  minLength: 6
+                email:
+                  type: string
+                  format: email
+                nickname:
+                  type: string
+      responses:
+        '200':
+          description: 注册成功
+
+  /auth/me:
+    get:
+      tags: [认证]
+      summary: 获取当前用户信息
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  /export/create:
+    post:
+      tags: [导出]
+      summary: 创建导出任务
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [format, articleUrls]
+              properties:
+                format:
+                  type: string
+                  enum: [html, excel, json, txt, markdown, word]
+                articleUrls:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                  minItems: 1
+                  maxItems: 1000
+      responses:
+        '200':
+          description: 任务创建成功
+
+  /health:
+    get:
+      tags: [系统]
+      summary: 健康检查
+      responses:
+        '200':
+          description: 系统健康
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, unhealthy, degraded]
+                  uptime:
+                    type: number
+                  checks:
+                    type: object
+        '503':
+          description: 系统不健康
