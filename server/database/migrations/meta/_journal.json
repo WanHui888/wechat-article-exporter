@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1771340591663,
+      "tag": "0000_skinny_zuras",
+      "breakpoints": true
+    }
+  ]
+}

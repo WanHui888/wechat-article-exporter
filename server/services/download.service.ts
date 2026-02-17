@@ -1,6 +1,7 @@
 import { join } from 'path'
 import { createHash } from 'crypto'
 import { load as cheerioLoad } from 'cheerio'
+import pLimit from 'p-limit'
 import { getFileService } from './file.service'
 import { getHtmlService } from './html.service'
 import { getResourceService } from './resource.service'
@@ -233,11 +234,12 @@ export class DownloadService {
     const urlMap = new Map<string, string>()
     const failedImages: string[] = []
 
-    // Download images
+    // Download images (并行)
     const resourceDir = this.fileService.getUploadPath(userId, fakeid, 'resources')
     let totalImageBytes = 0
+    const limit = pLimit(6) // 并发限制：6个
 
-    for (const imgUrl of imageUrls) {
+    const downloadTasks = imageUrls.map(imgUrl => limit(async () => {
       try {
         // Check if this resource already exists
         const existingResource = await this.resourceService.getResource(userId, imgUrl)
@@ -245,7 +247,7 @@ export class DownloadService {
           const hash = hashUrl(imgUrl)
           const ext = imgUrl.match(/wx_fmt=(\w+)/)?.[1] || 'jpg'
           urlMap.set(imgUrl, `images/${hash}.${ext}`)
-          continue
+          return 0
         }
 
         const imgResponse = await fetchWithRetry(imgUrl, {
@@ -254,7 +256,7 @@ export class DownloadService {
 
         if (!imgResponse.ok) {
           failedImages.push(imgUrl)
-          continue
+          return 0
         }
 
         const contentType = imgResponse.headers.get('content-type')
@@ -265,7 +267,6 @@ export class DownloadService {
 
         const buffer = Buffer.from(await imgResponse.arrayBuffer())
         const size = await this.fileService.saveFile(filePath, buffer)
-        totalImageBytes += size
 
         // Save resource record
         await this.resourceService.saveResource(userId, {
@@ -278,10 +279,15 @@ export class DownloadService {
 
         // Map original URL to relative path
         urlMap.set(imgUrl, `images/${fileName}`)
+        return size
       } catch {
         failedImages.push(imgUrl)
+        return 0
       }
-    }
+    }))
+
+    const imageSizes = await Promise.all(downloadTasks)
+    totalImageBytes = imageSizes.reduce((sum, size) => sum + size, 0)
 
     // Replace image URLs in HTML
     if (urlMap.size > 0) {
