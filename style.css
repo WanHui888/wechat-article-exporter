@@ -1,0 +1,38 @@
+:root {
+    /*--ag-selected-row-background-color: transparent;*/
+
+    .ag-header-cell-label {
+        justify-content: center;
+    }
+
+    .deleted-row {
+        background-color: #fef9c3;
+    }
+
+    /* 侧边栏工具面板标签 */
+    .ag-side-bar .ag-side-button-label {
+        letter-spacing: 0.2em;
+        font-size: 15px;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", system-ui, sans-serif;
+        /*font-weight: bold;*/
+    }
+}
+
+body {
+    overscroll-behavior: none; /* 阻止滚动到页面边缘的效果 */
+}
+::selection {
+    background-color: yellow;
+    color: black;
+}
+.highlight {
+    color: red;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}

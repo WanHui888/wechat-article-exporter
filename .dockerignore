@@ -1,0 +1,31 @@
+### NuxtJS template
+# Generated dirs
+dist
+
+.nuxt
+.nuxt-*
+.output
+.gen
+.yarn/cache  # Yarn 缓存
+yarn-error.log
+
+# Node dependencies
+node_modules
+
+# System files
+*.log
+
+.git
+.github
+
+.env*
+.DS_Store
+.idea
+.data
+
+design
+docs
+nuxt-options.json
+
+# wrangler
+.wrangler

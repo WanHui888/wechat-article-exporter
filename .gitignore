@@ -1,0 +1,36 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# SQLite database files
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+debug
+design
+docs
+samples/**/output
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# wrangler
+.wrangler
